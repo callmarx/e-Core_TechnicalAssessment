@@ -282,6 +282,7 @@ RSpec/MultipleDescribes:
 # See https://rspec.rubystyle.guide/#expectation-per-example.
 RSpec/MultipleExpectations:
   Enabled: true
+  Max: 4
 
 # Checks if example groups contain too many `let` and `subject` calls.
 RSpec/MultipleMemoizedHelpers:
