@@ -2,8 +2,8 @@
 
 FactoryBot.define do
   factory :role do
-    team_id { Faker::Internet.uuid }
-    user_id { Faker::Internet.uuid }
+    team_id { @team_id || Faker::Internet.uuid }
+    user_id { @user_id || Faker::Internet.uuid }
     ability { ["Developer", "Product Owner", "Tester"].sample }
   end
 end
