@@ -6,7 +6,7 @@ RSpec.describe RolesController, type: :routing do
   include_context "with mocked services"
 
   describe "routing" do
-    let(:role) { create(:role) }
+    let(:role) { create(:role, user_id: mocked_user_id, team_id: mocked_team_id) }
 
     it "routes to #index" do
       expect(get: "/roles").to route_to("roles#index")

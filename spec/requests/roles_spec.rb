@@ -10,7 +10,7 @@ RSpec.describe "/roles", type: :request do
   end
 
   describe "GET requests" do
-    let!(:role) { create(:role) }
+    let(:role) { create(:role, user_id: mocked_user_id, team_id: mocked_team_id) }
 
     describe "GET /roles => roles#index" do
       before { get roles_url, headers: valid_headers, as: :json }
@@ -40,35 +40,65 @@ RSpec.describe "/roles", type: :request do
     end
 
     describe "GET /roles/ability/:ability => roles#index_by_ability" do
-      before { get roles_by_ability_url(ability: role.ability), headers: valid_headers, as: :json }
+      context "with valid parameters" do
+        it "renders a JSON response with the roles" do
+          get roles_by_ability_url(ability: role.ability), headers: valid_headers, as: :json
+          expect(response).to have_http_status(:ok)
+          expect(response).to match_json_schema("roles")
+        end
+      end
 
-      it "renders a JSON response with the roles" do
-        expect(response).to have_http_status(:ok)
-        expect(response).to match_json_schema("roles")
+      context "with invalid parameters" do
+        it "renders a JSON response with error" do
+          get roles_by_ability_url(ability: "invalid"), headers: valid_headers, as: :json
+          parsed_body = response.parsed_body
+          expect(response).to have_http_status(:bad_request)
+          expect(parsed_body).to include({ "error" => "'invalid' is not a valid ability" })
+        end
       end
     end
 
     describe "GET /roles/:id => roles#show" do
-      before { get role_url(role), headers: valid_headers, as: :json }
+      context "with valid parameters" do
+        it "renders a JSON response with the role" do
+          get role_url(role), headers: valid_headers, as: :json
+          expect(response).to have_http_status(:ok)
+          expect(response).to match_json_schema("role")
+        end
+      end
 
-      it "renders a JSON response with the role" do
-        expect(response).to have_http_status(:ok)
-        expect(response).to match_json_schema("role")
+      context "with invalid parameters" do
+        it "renders a JSON response with error" do
+          get role_url(role.id + 1), headers: valid_headers, as: :json
+          parsed_body = response.parsed_body
+          expect(response).to have_http_status(:not_found)
+          expect(parsed_body).to include({ "error" => "Entity not found" })
+        end
       end
     end
 
     describe "GET /roles/membership/:team_id/:user_id => roles#show_by_team_user" do
-      before { get role_by_team_and_user_url(user_id: role.user_id, team_id: role.team_id), headers: valid_headers, as: :json }
+      context "with valid parameters" do
+        it "renders a JSON response with the role" do
+          get role_by_team_and_user_url(user_id: role.user_id, team_id: role.team_id), headers: valid_headers, as: :json
+          expect(response).to have_http_status(:ok)
+          expect(response).to match_json_schema("role")
+        end
+      end
 
-      it "renders a JSON response with the role" do
-        expect(response).to have_http_status(:ok)
-        expect(response).to match_json_schema("role")
+      context "with invalid parameters" do
+        it "renders a JSON response with error" do
+          get role_by_team_and_user_url(user_id: "invalid", team_id: "invalid"), headers: valid_headers, as: :json
+          parsed_body = response.parsed_body
+          expect(response).to have_http_status(:not_found)
+          expect(parsed_body).to include({ "error" => "Entity not found" })
+        end
       end
     end
   end
 
   describe "POST/DELETE requests" do
-    let(:valid_attributes) do
+    let!(:valid_attributes) do
       {
         team_id: Faker::Internet.uuid,
         user_id: Faker::Internet.uuid,
@@ -83,6 +113,8 @@ RSpec.describe "/roles", type: :request do
         ability: "invalid ability"
       }
     end
+
+    before { allow(UsersOfTeamService).to receive(:call).and_return([valid_attributes[:user_id]]) }
 
     describe "POST /roles => roles#create" do
       context "with valid parameters" do

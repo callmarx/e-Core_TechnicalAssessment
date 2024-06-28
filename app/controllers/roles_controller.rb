@@ -18,19 +18,19 @@ class RolesController < ApplicationController
   end
 
   def index_by_ability
-    @roles = Role.where(ability: params[:ability])
-    render(:index)
+    if Role.abilities.key?(params[:ability])
+      @roles = Role.where(ability: params[:ability])
+      render(:index)
+    else
+      render(status: :bad_request, json: { error: "'#{params[:ability]}' is not a valid ability" })
+    end
   end
 
   def show; end
 
   def show_by_team_and_user
-    @role = Role.find_by(team_id: params[:team_id], user_id: params[:user_id])
-    if @role
-      render(:show)
-    else
-      render(json: { error: "Membership not found" }, status: :not_found)
-    end
+    @role = Role.find_by!(team_id: params[:team_id], user_id: params[:user_id])
+    render(:show)
   end
 
   def create

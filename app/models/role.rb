@@ -3,7 +3,10 @@
 class Role < ApplicationRecord
   validates :ability, uniqueness: { scope: %i[team_id user_id] }
   validates :team_id, :user_id, format: { with: /\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/ }
-  enum :ability, { developer: "Developer", product_owner: "Product Owner", tester: "Tester" }, validate: true
+  enum :ability,
+       { developer: "Developer", product_owner: "Product Owner", tester: "Tester" },
+       default: :developer,
+       validate: true
 
   validate :check_team_existence, :check_user_existence
 
@@ -20,7 +23,7 @@ class Role < ApplicationRecord
       users = UsersOfTeamService.call(team_id)
       if !users
         errors.add(:team_id, "Team not found")
-      elsif users.include?(user_id)
+      elsif users.exclude?(user_id)
         errors.add(:user_id, "User doesn't belong to the team")
       end
     end
