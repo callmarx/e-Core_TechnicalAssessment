@@ -9,17 +9,17 @@ class RolesController < ApplicationController
 
   def index_by_team
     @roles = Role.where(team_id: params[:team_id])
-    render(json: @roles)
+    render(:index)
   end
 
   def index_by_user
     @roles = Role.where(user_id: params[:user_id])
-    render(json: @roles)
+    render(:index)
   end
 
   def index_by_ability
     @roles = Role.where(ability: params[:ability])
-    render(json: @roles)
+    render(:index)
   end
 
   def show; end
@@ -27,7 +27,7 @@ class RolesController < ApplicationController
   def show_by_team_and_user
     @role = Role.find_by(team_id: params[:team_id], user_id: params[:user_id])
     if @role
-      render(json: @role)
+      render(:show)
     else
       render(json: { error: "Membership not found" }, status: :not_found)
     end

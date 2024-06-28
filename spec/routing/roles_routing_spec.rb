@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.describe RolesController, type: :routing do
+  include_context "with mocked services"
+
   describe "routing" do
     let(:role) { create(:role) }
 

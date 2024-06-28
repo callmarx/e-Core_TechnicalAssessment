@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Generated schema for Root",
+  "type": "object",
+  "properties": {
+    "team_id": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "user_id": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ability": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

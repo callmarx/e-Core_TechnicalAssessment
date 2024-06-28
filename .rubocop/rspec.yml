@@ -300,6 +300,7 @@ RSpec/NamedSubject:
 # Checks for nested example groups like a `context inside a context`.
 RSpec/NestedGroups:
   Enabled: true
+  Max: 5
 
 # Checks if an example contains any expectation
 RSpec/NoExpectationExample:

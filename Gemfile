@@ -48,6 +48,8 @@ group :development, :test do
   ### https://github.com/rubyforgood/human-essentials/blob/main/bin/setup
   # Rails plugin for command line.
   gem "pry-rails", "~> 0.3.9"
+  # Validate the JSON returned by your Rails JSON APIs
+  gem "json_matchers", "0.11.1"
   # RSpec behavioral testing framework for Rails.
   gem "rspec-rails", "~> 6.1.2"
   # Show code coverage.
