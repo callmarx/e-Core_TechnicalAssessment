@@ -32,11 +32,12 @@ RSpec.describe Role, type: :model do
 
       context "with a team not found" do
         let(:nonexistent_team_id) { Faker::Internet.uuid }
+
         before { allow(UsersOfTeamService).to receive(:call).with(nonexistent_team_id).and_return(nil) }
 
         it "is expected to not be valid" do
           role = described_class.new(user_id: mocked_user_id, team_id: nonexistent_team_id)
-          expect(role.valid?).to be_falsey
+          expect(role).not_to be_valid
           expect(role.errors[:team_id]).to include("Team not found")
         end
       end
@@ -44,7 +45,7 @@ RSpec.describe Role, type: :model do
       context "with a user that does not belong to the team" do
         it "is expected to not be valid" do
           role = described_class.new(user_id: Faker::Internet.uuid, team_id: mocked_team_id)
-          expect(role.valid?).to be_falsey
+          expect(role).not_to be_valid
           expect(role.errors[:user_id]).to include("User doesn't belong to the team")
         end
       end
@@ -59,11 +60,12 @@ RSpec.describe Role, type: :model do
 
       context "with a user not found" do
         let(:nonexistent_user_id) { Faker::Internet.uuid }
+
         before { allow(UserCheckService).to receive(:call).with(nonexistent_user_id).and_return(false) }
 
         it "is expected to not be valid" do
           role = described_class.new(user_id: nonexistent_user_id, team_id: mocked_team_id)
-          expect(role.valid?).to be_falsey
+          expect(role).not_to be_valid
           expect(role.errors[:user_id]).to include("User not found")
         end
       end
