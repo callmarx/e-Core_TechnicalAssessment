@@ -1,6 +1,27 @@
 version: "3.8"
 
 services:
+  api:
+    build: .
+    container_name: api
+    volumes:
+      - .:/app
+      - bundle_data:/usr/local/bundle
+    ports:
+      - "3000:3000"
+    environment:
+      - HISTFILE=/app/log/.bash_history 
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
   postgres:
     image: postgres:16-alpine
     mem_limit: 256m
@@ -13,6 +34,11 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
     restart: on-failure
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 2s
+      timeout: 5s
+      retries: 30
 
   redis:
     image: redis:7-alpine
@@ -22,5 +48,6 @@ services:
       - redis_data:/data
 
 volumes:
+  bundle_data:
   pg_data:
   redis_data:
