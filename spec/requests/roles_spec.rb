@@ -51,9 +51,8 @@ RSpec.describe "/roles", type: :request do
       context "with invalid parameters" do
         it "renders a JSON response with error" do
           get roles_by_ability_url(ability: "invalid"), headers: valid_headers, as: :json
-          parsed_body = response.parsed_body
           expect(response).to have_http_status(:bad_request)
-          expect(parsed_body).to include({ "error" => "'invalid' is not a valid ability" })
+          expect(response.parsed_body).to include({ "error" => "'invalid' is not a valid ability" })
         end
       end
     end
@@ -70,9 +69,8 @@ RSpec.describe "/roles", type: :request do
       context "with invalid parameters" do
         it "renders a JSON response with error" do
           get role_url(role.id + 1), headers: valid_headers, as: :json
-          parsed_body = response.parsed_body
           expect(response).to have_http_status(:not_found)
-          expect(parsed_body).to include({ "error" => "Entity not found" })
+          expect(response.parsed_body).to include({ "error" => "Entity not found" })
         end
       end
     end
@@ -89,9 +87,8 @@ RSpec.describe "/roles", type: :request do
       context "with invalid parameters" do
         it "renders a JSON response with error" do
           get role_by_team_and_user_url(user_id: "invalid", team_id: "invalid"), headers: valid_headers, as: :json
-          parsed_body = response.parsed_body
           expect(response).to have_http_status(:not_found)
-          expect(parsed_body).to include({ "error" => "Entity not found" })
+          expect(response.parsed_body).to include({ "error" => "Entity not found" })
         end
       end
     end
@@ -149,6 +146,18 @@ RSpec.describe "/roles", type: :request do
         it "renders a JSON response with errors for the new role" do
           expect(response).to have_http_status(:unprocessable_entity)
           expect(response).to match_json_schema("role_error")
+        end
+      end
+
+      context "when External API returns error" do
+        before do
+          allow(UsersOfTeamService).to receive(:call).and_raise(ExternalApiError, "External API Error => response")
+          post roles_url, params: { role: valid_attributes }, headers: valid_headers, as: :json
+        end
+
+        it "renders a JSON response with exteranl API error" do
+          expect(response).to have_http_status(:service_unavailable)
+          expect(response.parsed_body).to include({ "error" => "External API Error => response" })
         end
       end
     end

@@ -43,19 +43,12 @@ group :development, :test do
   gem "faker", "~> 3.4.1"
   # Generate models based on factory definitions.
   gem "factory_bot_rails", "~> 6.4.3"
-  ### TO-DO: In addition to the foreman gem, create a bin/setup script to prepare
-  ### the project for first use. Use as reference:
-  ### https://github.com/rubyforgood/human-essentials/blob/main/bin/setup
   # Rails plugin for command line.
   gem "pry-rails", "~> 0.3.9"
   # Validate the JSON returned by your Rails JSON APIs
   gem "json_matchers", "0.11.1"
   # RSpec behavioral testing framework for Rails.
   gem "rspec-rails", "~> 6.1.2"
-  # Show code coverage.
-  gem "simplecov", "~> 0.22"
-  # More concise test ("should") matchers
-  gem "shoulda-matchers", "~> 6.2"
   # Static analysis / linter.
   gem "rubocop", "~> 1.64.1"
   gem "rubocop-packaging", "~> 0.5.2"
@@ -63,6 +56,12 @@ group :development, :test do
   gem "rubocop-rails", "~> 2.24.1"
   gem "rubocop-rspec", "~> 2.29.1"
   gem "rubycritic", "~> 4.9"
+  # More concise test ("should") matchers
+  gem "shoulda-matchers", "~> 6.2"
+  # Show code coverage.
+  gem "simplecov", "~> 0.22"
+  # Library for stubbing and setting expectations on HTTP requests in Ruby
+  gem "webmock", "~> 3.23.1"
 end
 
 group :development do
