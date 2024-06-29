@@ -21,6 +21,12 @@ gem "jbuilder", "~> 2.12.0"
 gem "bootsnap", "~> 1.18.3", require: false
 # Library that allows you to use other API’s and provides responses from them.
 gem "httparty", "~> 0.22.0"
+# Simple, efficient background processing for Ruby
+gem "sidekiq", "~> 7.2.4"
+# A scheduling add-on for Sidekiq
+gem "sidekiq-cron", "~> 1.12.0"
+# Redis adapter (a memmory database for sidekiq)
+gem "redis", "~> 5.2.0"
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
