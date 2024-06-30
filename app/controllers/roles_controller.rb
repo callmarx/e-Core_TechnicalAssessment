@@ -18,7 +18,7 @@ class RolesController < ApplicationController
   end
 
   def index_by_ability
-    if Role.abilities.key?(params[:ability])
+    if Role.abilities.key?(params[:ability]) || Role.abilities.value?(params[:ability])
       @roles = Role.where(ability: params[:ability])
       render(:index)
     else
@@ -26,12 +26,21 @@ class RolesController < ApplicationController
     end
   end
 
-  def show; end
-
-  def show_by_team_and_user
-    @role = Role.find_by!(team_id: params[:team_id], user_id: params[:user_id])
-    render(:show)
+  def index_by_ability_and_team
+    if Role.abilities.key?(params[:ability]) || Role.abilities.value?(params[:ability])
+      @roles = Role.where(ability: params[:ability], team_id: params[:team_id])
+      render(:index)
+    else
+      render(status: :bad_request, json: { error: "'#{params[:ability]}' is not a valid ability" })
+    end
   end
+
+  def index_by_team_and_user
+    @role = Role.where(team_id: params[:team_id], user_id: params[:user_id])
+    render(:index)
+  end
+
+  def show; end
 
   def create
     @role = Role.new(role_params)

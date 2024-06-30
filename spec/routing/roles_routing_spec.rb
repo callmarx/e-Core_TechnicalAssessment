@@ -24,16 +24,24 @@ RSpec.describe RolesController, type: :routing do
       expect(get: "/roles/ability/#{role.ability}").to route_to("roles#index_by_ability", ability: role.ability)
     end
 
-    it "routes to #show" do
-      expect(get: "/roles/#{role.id}").to route_to("roles#show", id: role.id.to_s)
+    it "routes to #index_by_ability_and_team" do
+      expect(get: "/roles/ability/#{role.ability}/#{role.team_id}").to route_to(
+        "roles#index_by_ability_and_team",
+        ability: role.ability,
+        team_id: role.team_id
+      )
     end
 
-    it "routes to #show_by_team_and_user" do
+    it "routes to #index_by_team_and_user" do
       expect(get: "/roles/membership/#{role.team_id}/#{role.user_id}").to route_to(
-        "roles#show_by_team_and_user",
+        "roles#index_by_team_and_user",
         team_id: role.team_id,
         user_id: role.user_id
       )
+    end
+
+    it "routes to #show" do
+      expect(get: "/roles/#{role.id}").to route_to("roles#show", id: role.id.to_s)
     end
 
     it "routes to #create" do

@@ -121,7 +121,14 @@ have something to see on the endpoints.
         --header 'Content-Type: application/json' \
         --url http://localhost:3000/roles/ability/Product%20Owner
    ```
-- `GET /roles/membership/:team_id/:user_id` → Find a role by its User and Team
+- `GET /roles/ability/:ability/:team_id` → List roles with a specific ability and Team
+   ```sh
+   # example with curl
+   curl --request GET \
+        --header 'Content-Type: application/json' \
+        --url http://localhost:3000/roles/ability/Product%20Owner/7676a4bf-adfe-415c-941b-1739af07039b
+   ```
+- `GET /roles/membership/:team_id/:user_id` → List roles by a specific User and Team
    ```sh
    # example with curl
    curl --request GET \
@@ -130,8 +137,8 @@ have something to see on the endpoints.
    ```
 
 ## A little explaining
-In the test statement, we have "Follow the case instructions; they are intentionally vague to allow
-for your interpretation". So here are some interpretations and decisions that I made for this project.
+In the test statement, we have *"Follow the case instructions; they are intentionally vague to allow
+for your interpretation"*. So here are some interpretations and decisions that I made for this project.
 
 ### Model structure
 A `Role` is Rails model that needs a `team_id`, a `user_id` and a `ability`, which is an enum also
@@ -172,13 +179,14 @@ In the test statement, we have:
 > - Look up memberships for a role
 
 These actions are served by the following endpoints:
-- Create a new role: `POST /roles`
-- Assign a role to a team member: `POST /roles`
-- Look up a role for a membership: `GET /roles/user/:user_id`
-- Look up memberships for a role: `GET /roles/ability/:ability` and `GET /roles/ability/:ability/:team_id` (###MISSING!)
+1. Create a new role: `POST /roles`
+2. Assign a role to a team member: `POST /roles`
+3. Look up a role for a membership: `GET /roles/user/:user_id` and `/roles/membership/:team_id/:user_id`
+4. Look up memberships for a role: `GET /roles/ability/:ability` and `GET /roles/ability/:ability/:team_id`
 
-"Create a new role" and "Assign a role to a team member" share the same endpoint because of the
+**Note:** "Create a new role" and "Assign a role to a team member" share the same endpoint because of the
 model structure I'm using - you always need a `team_id` and a `user_id` to assign/create a role.
+
 
 ### "What happens if the data you are using gets deleted?"
 To address this question, I've created a Sidekiq Job that runs every 5 minutes (this scheduling can

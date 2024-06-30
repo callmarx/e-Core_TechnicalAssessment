@@ -57,6 +57,36 @@ RSpec.describe "/roles", type: :request do
       end
     end
 
+    describe "GET /roles/ability/:ability/:team_id => roles#index_by_ability_and_team" do
+      context "with valid parameters" do
+        it "renders a JSON response with the roles" do
+          get roles_by_ability_and_team_url(ability: role.ability, team_id: role.team_id), headers: valid_headers, as: :json
+          expect(response).to have_http_status(:ok)
+          expect(response).to match_json_schema("roles")
+        end
+      end
+
+      context "with invalid parameters" do
+        it "renders a JSON response with error" do
+          get roles_by_ability_and_team_url(ability: "invalid", team_id: role.team_id), headers: valid_headers, as: :json
+          expect(response).to have_http_status(:bad_request)
+          expect(response.parsed_body).to include({ "error" => "'invalid' is not a valid ability" })
+        end
+      end
+    end
+
+    describe "GET /roles/membership/:team_id/:user_id => roles#index_by_team_user" do
+      context "with valid parameters" do
+        it "renders a JSON response with the role" do
+          get roles_by_team_and_user_url(user_id: role.user_id, team_id: role.team_id),
+              headers: valid_headers,
+              as: :json
+          expect(response).to have_http_status(:ok)
+          expect(response).to match_json_schema("roles")
+        end
+      end
+    end
+
     describe "GET /roles/:id => roles#show" do
       context "with valid parameters" do
         it "renders a JSON response with the role" do
@@ -69,24 +99,6 @@ RSpec.describe "/roles", type: :request do
       context "with invalid parameters" do
         it "renders a JSON response with error" do
           get role_url(role.id + 1), headers: valid_headers, as: :json
-          expect(response).to have_http_status(:not_found)
-          expect(response.parsed_body).to include({ "error" => "Entity not found" })
-        end
-      end
-    end
-
-    describe "GET /roles/membership/:team_id/:user_id => roles#show_by_team_user" do
-      context "with valid parameters" do
-        it "renders a JSON response with the role" do
-          get role_by_team_and_user_url(user_id: role.user_id, team_id: role.team_id), headers: valid_headers, as: :json
-          expect(response).to have_http_status(:ok)
-          expect(response).to match_json_schema("role")
-        end
-      end
-
-      context "with invalid parameters" do
-        it "renders a JSON response with error" do
-          get role_by_team_and_user_url(user_id: "invalid", team_id: "invalid"), headers: valid_headers, as: :json
           expect(response).to have_http_status(:not_found)
           expect(response.parsed_body).to include({ "error" => "Entity not found" })
         end
