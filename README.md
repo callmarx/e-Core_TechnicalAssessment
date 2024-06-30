@@ -198,3 +198,37 @@ This job, `ExternalDataSyncJob`, goes through all existing roles and checks the 
 - and if `user_id` is still part of its `team_id`.
 
 It removes the role if it fails in one or more of these checks.
+
+#### Why just do I delete from time to time?
+
+Since we are talking about an application that returns the role of a User from a Team, it doesn't
+seem likely that there will be a request to check a role/permission for a user that doesn't exist
+or doesn't belong to a Team anymore. Additionally, if a user no longer exists or no longer belongs
+to a team, these changes are likely to be reflected in other parts of the system. For example, a
+user that no longer exists would likely have their login credentials disabled, and a user that no
+longer belongs to a team would have their access to team resources revoked.
+
+The `ExternalDataSyncJob` runs periodically to ensure data consistency by checking the existence
+and team membership of users. This job helps to clean up any invalid roles that might exist due
+to changes in the external data, ensuring that the system remains consistent over time.
+
+### Why didn't I implement caching?
+
+As I explained in ["Why just do I delete from time to time"](#why-just-do-i-delete-from-time-to-time),
+I assumed that some business rules would, in theory, be controlled by other applications such as
+deactivated credentials and revoked team resources. However, the rules for allowing members (users
+of a team) would be the responsibility of this application, so when a Role is removed this effect
+should immediately have an impact on the application's responses.
+
+## What could I do better
+1. **Exception Handling and Logging**:
+   - **Logging**: Add better logs to facilitate monitoring and debugging, especially in services and jobs.
+   - **Resilience**: Implement retry mechanisms in case of temporary failures in the external API.
+
+2. **Caching**:
+   - **Performance**: Depending on how much the application is requested, I could consider caching,
+   however with a high sensitivity as explained in ["Why didn't I implement caching?"](#why-didnt-i-implement-caching),
+   that is, resetting the cache every time a Role is changed.
+
+3. **Documentation**:
+   - **API Endpoints**: Clearly document the API endpoints, including request and response examples.
